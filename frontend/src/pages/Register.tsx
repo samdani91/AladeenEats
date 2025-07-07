@@ -93,7 +93,7 @@ const Register: React.FC = () => {
         </Button>
       </Link>
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-2xl relative z-10">
         <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/95 rounded-3xl overflow-hidden animate-fade-in-scale">
           <CardHeader className="space-y-1 text-center pb-6 pt-8">
             <div className="relative mb-6">
@@ -288,6 +288,11 @@ const Register: React.FC = () => {
               <span className="text-gray-600">Already have an account? </span>
               <Link to="/login" className="text-orange-600 hover:text-orange-700 font-semibold transition-colors hover:underline">
                 Sign in
+              </Link>
+              <br/>
+              <span className="text-gray-600">Want to add your restaurent? </span>
+              <Link to="/restaurantRegister" className="text-orange-600 hover:text-orange-700 font-semibold transition-colors hover:underline">
+                Apply here
               </Link>
             </div>
           </CardContent>
