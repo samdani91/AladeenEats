@@ -6,6 +6,7 @@ import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Cart from '@/pages/Cart';
+import RestaurantRegistration from './pages/RestaurantRegistration';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path='/restaurantRegister' element={<RestaurantRegistration />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="cart" element={<Cart />} />
