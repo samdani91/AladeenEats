@@ -21,7 +21,7 @@ const Register: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { register } = useAuth();
+  const { register: registerContext } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +47,8 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    console.log('Form submitted:', formData); // Debug log
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -63,15 +64,19 @@ const Register: React.FC = () => {
       return;
     }
 
+    console.log("Sequence came to here");
+
     setIsLoading(true);
+    console.log('Starting registration...'); // Debug log
 
     try {
-      await register(formData.email, formData.password, formData.name);
+      await registerContext(formData.email, formData.password, formData.name, formData.phone);
       toast.success('Account created successfully! 🎉', {
-        description: 'Welcome to FoodieExpress!',
+        description: 'Welcome to Aladeen Eats!',
       });
       navigate('/');
     } catch (error) {
+      console.error('Registration error in component:', error); // Debug log
       toast.error('Failed to create account', {
         description: 'Please try again with different details.',
       });
