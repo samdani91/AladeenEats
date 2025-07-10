@@ -5,7 +5,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  register: (email: string, password: string, name: string, phone?: string) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
 }
@@ -41,55 +41,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock user data
-    const mockUser: User = {
-      id: '1',
-      email,
-      name: 'John Doe',
-      phone: '+1 234 567 8900',
-      role: 'customer',
-      addresses: [
-        {
-          id: '1',
-          label: 'Home',
-          street: '123 Main St',
-          city: 'New York',
-          state: 'NY',
-          zipCode: '10001',
-          isDefault: true
-        }
-      ],
-      createdAt: new Date().toISOString()
-    };
-
-    const token = 'mock_jwt_token_' + Date.now();
-    
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('user_data', JSON.stringify(mockUser));
-    setUser(mockUser);
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) throw new Error('Login failed');
+      const data = await response.json();
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('user_data', JSON.stringify(data.user));
+      setUser(data.user);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const register = async (email: string, password: string, name: string) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  const register = async (email: string, password: string, name: string, phone?: string) => {
+    setIsLoading(true);
+    try {
+      console.log('Sending registration request:', { name, email, phone }); // Debug log
     
-    const mockUser: User = {
-      id: Date.now().toString(),
-      email,
-      name,
-      role: 'customer',
-      addresses: [],
-      createdAt: new Date().toISOString()
-    };
-
-    const token = 'mock_jwt_token_' + Date.now();
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, phone }),
+      });
+      
+      console.log('Response status:', response.status); // Debug log
     
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('user_data', JSON.stringify(mockUser));
-    setUser(mockUser);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Registration failed:', errorData); // Debug log
+        throw new Error(errorData.message || 'Registration failed');
+      }
+      
+      const data = await response.json();
+      console.log('Registration successful:', data); // Debug log
+    
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('user_data', JSON.stringify(data.user));
+      setUser(data.user);
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {

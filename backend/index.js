@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
+// Use the auth routes
 app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
