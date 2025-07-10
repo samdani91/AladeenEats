@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@/types';
 
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -32,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
-      } catch (error) {
+      } catch {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_data');
       }
@@ -75,7 +76,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Registration failed:', errorData); // Debug log
         throw new Error(errorData.message || 'Registration failed');
       }
       

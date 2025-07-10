@@ -47,7 +47,7 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData); // Debug log
+
 
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
@@ -64,10 +64,8 @@ const Register: React.FC = () => {
       return;
     }
 
-    console.log("Sequence came to here");
-
     setIsLoading(true);
-    console.log('Starting registration...'); // Debug log
+
 
     try {
       await registerContext(formData.email, formData.password, formData.name, formData.phone);
@@ -76,9 +74,8 @@ const Register: React.FC = () => {
       });
       navigate('/');
     } catch (error) {
-      console.error('Registration error in component:', error); // Debug log
       toast.error('Failed to create account', {
-        description: 'Please try again with different details.',
+        description: error instanceof Error ? error.message : 'An unexpected error occurred',
       });
     } finally {
       setIsLoading(false);

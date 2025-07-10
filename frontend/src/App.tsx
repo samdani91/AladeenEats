@@ -7,7 +7,7 @@ import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Cart from '@/pages/Cart';
 import RestaurantRegistration from './pages/RestaurantRegistration';
-
+import { Toaster } from './components/ui/sonner';
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
           </Routes>
         </Router>
       </CartProvider>
+      <Toaster richColors position="bottom-right" />
     </AuthProvider>
   );
 }
