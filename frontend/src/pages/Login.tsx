@@ -9,8 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('demo@example.com');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
       navigate('/');
     } catch (error) {
       toast.error('Sign in failed', {
-        description: 'Please check your email and password.',
+        description: (error as Error).message || 'Please check your email and password.',
       });
     } finally {
       setIsLoading(false);
@@ -139,13 +139,6 @@ const Login: React.FC = () => {
               </Link>
             </div>
 
-            <div className="text-center text-xs text-gray-500 bg-blue-50 p-4 rounded-xl border border-blue-100">
-              <div className="font-semibold text-blue-700 mb-2">Demo Account</div>
-              <div className="space-y-1">
-                <div><strong>Email:</strong> demo@example.com</div>
-                <div><strong>Password:</strong> password</div>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -113,6 +113,12 @@ export const login = async (req, res) => {
             accessToken: accessToken,
             accessTokenExp: accessTokenExp,
             isAuthenticated: true,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+            }
         });
     } catch (err) {
         console.log("login error", err);

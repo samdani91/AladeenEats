@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, MapPin, CreditCard, Bell, Shield, LogOut, Edit } from 'lucide-react';
+import { User, MapPin, CreditCard, Bell, LogOut, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -143,9 +143,9 @@ const Profile: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {user.addresses.length > 0 ? (
+                {(user.addresses ?? []).length > 0 ? (
                   <div className="space-y-4">
-                    {user.addresses.map((address) => (
+                    {(user.addresses ?? []).map((address) => (
                       <div key={address.id} className="border rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-medium">{address.label}</h3>
@@ -229,26 +229,6 @@ const Profile: React.FC = () => {
                     </div>
                     <Switch />
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Shield className="h-5 w-5 mr-2" />
-                    Privacy & Security
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start">
-                    Change Password
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    Download My Data
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700">
-                    Delete Account
-                  </Button>
                 </CardContent>
               </Card>
             </div>

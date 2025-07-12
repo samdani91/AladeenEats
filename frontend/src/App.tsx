@@ -14,6 +14,7 @@ import RestaurantRegistration from './pages/RestaurantRegistration';
 import Restaurants from '@/pages/Restaurants';
 import RestaurantDetail from '@/pages/RestaurantDetail';
 import RestaurantDashboard from '@/pages/RestaurantDashboard';
+import UserSettings from '@/pages/UserSettings';
 import { Toaster } from './components/ui/sonner';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
               <Route path="checkout" element={<Checkout />} />
               <Route path="order/:id" element={<OrderTracking />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<UserSettings />} />
               <Route path="orders" element={<Orders />} />
             </Route>
           </Routes>
