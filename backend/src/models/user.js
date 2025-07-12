@@ -27,6 +27,11 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
+    role: {
+        type: String,
+        enum: ['customer', 'restaurantAdmin', 'superAdmin'],
+        default: 'customer'
+    },
 }, { timestamps: true });
 
 // Add name virtual field

@@ -15,6 +15,7 @@ import Restaurants from '@/pages/Restaurants';
 import RestaurantDetail from '@/pages/RestaurantDetail';
 import RestaurantDashboard from '@/pages/RestaurantDashboard';
 import UserSettings from '@/pages/UserSettings';
+import SuperAdminDashboard from '@/pages/SuperAdminDashboard';
 import { Toaster } from './components/ui/sonner';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path='/restaurantRegister' element={<RestaurantRegistration />} />
             <Route path="/restaurant/dashboard" element={<RestaurantDashboard />} />
+            <Route path='/superAdmin' element={<SuperAdminDashboard />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="restaurants" element={<Restaurants />} />

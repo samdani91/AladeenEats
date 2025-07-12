@@ -3,7 +3,7 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
-  role: 'customer' | 'restaurant' | 'admin';
+  role: 'customer' | 'restaurantAdmin' | 'superAdmin';
   addresses: Address[];
   createdAt: string;
 }
