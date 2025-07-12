@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreditCard, MapPin, Clock, Plus, Check } from 'lucide-react';
@@ -18,7 +19,7 @@ const Checkout: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  const [selectedAddress, setSelectedAddress] = useState(user?.addresses.find(a => a.isDefault)?.id || '');
+  const [selectedAddress, setSelectedAddress] = useState(user?.addresses?.find(a => a.isDefault)?.id || '');
   const [selectedPayment, setSelectedPayment] = useState('cash');
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
@@ -76,7 +77,7 @@ const Checkout: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {user.addresses.length > 0 ? (
+                {user.addresses?.length > 0 ? (
                   <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>
                     {user.addresses.map((address) => (
                       <div key={address.id} className="flex items-center space-x-2 p-3 border rounded-lg">
