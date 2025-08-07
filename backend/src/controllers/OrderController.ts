@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
+import PaymentMethod from "../models/paymentMethod";
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
 const FRONTEND_URL = process.env.FRONTEND_URL as string;
@@ -33,6 +34,8 @@ type CheckoutSessionRequest = {
     city: string;
   };
   restaurantId: string;
+  paymentMethod: "stripe" | "cash"; // Added
+  paymentMethodId?: string; // Added for saved cards
 };
 
 const stripeWebhookHandler = async (req: Request, res: Response) => {
@@ -69,11 +72,7 @@ const stripeWebhookHandler = async (req: Request, res: Response) => {
 const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const checkoutSessionRequest: CheckoutSessionRequest = req.body;
-
-    const restaurant = await Restaurant.findById(
-      checkoutSessionRequest.restaurantId
-    );
-
+    const restaurant = await Restaurant.findById(checkoutSessionRequest.restaurantId);
     if (!restaurant) {
       throw new Error("Restaurant not found");
     }
@@ -84,19 +83,23 @@ const createCheckoutSession = async (req: Request, res: Response) => {
       status: "placed",
       deliveryDetails: checkoutSessionRequest.deliveryDetails,
       cartItems: checkoutSessionRequest.cartItems,
+      paymentMethod: checkoutSessionRequest.paymentMethod,
+      paymentMethodId: checkoutSessionRequest.paymentMethodId,
       createdAt: new Date(),
     });
 
-    const lineItems = createLineItems(
-      checkoutSessionRequest,
-      restaurant.menuItems
-    );
+    if (checkoutSessionRequest.paymentMethod === "cash") {
+      await newOrder.save();
+      return res.json({ url: `${FRONTEND_URL}/order-status?success=true` });
+    }
 
+    const lineItems = createLineItems(checkoutSessionRequest, restaurant.menuItems);
     const session = await createSession(
       lineItems,
       newOrder._id.toString(),
       restaurant.deliveryPrice,
-      restaurant._id.toString()
+      restaurant._id.toString(),
+      checkoutSessionRequest.paymentMethodId
     );
 
     if (!session.url) {
@@ -107,7 +110,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
     res.json({ url: session.url });
   } catch (error: any) {
     console.log(error);
-    res.status(500).json({ message: error.raw.message });
+    res.status(500).json({ message: error.raw?.message || "Something went wrong" });
   }
 };
 
@@ -145,7 +148,8 @@ const createSession = async (
   lineItems: Stripe.Checkout.SessionCreateParams.LineItem[],
   orderId: string,
   deliveryPrice: number,
-  restaurantId: string
+  restaurantId: string,
+  paymentMethodId?: string
 ) => {
   const sessionData = await STRIPE.checkout.sessions.create({
     line_items: lineItems,
@@ -166,6 +170,7 @@ const createSession = async (
       orderId,
       restaurantId,
     },
+    payment_method_types: ["card"],
     success_url: `${FRONTEND_URL}/order-status?success=true`,
     cancel_url: `${FRONTEND_URL}/detail/${restaurantId}?cancelled=true`,
   });

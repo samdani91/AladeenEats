@@ -8,6 +8,8 @@ const menuItemSchema = new mongoose.Schema({
   },
   name: { type: String, required: true },
   price: { type: Number, required: true },
+  description: { type: String }, // Added for menu item descriptions
+  imageUrl: { type: String }, // Added for menu item images
 });
 
 export type MenuItemType = InferSchemaType<typeof menuItemSchema>;
@@ -23,6 +25,8 @@ const restaurantSchema = new mongoose.Schema({
   menuItems: [menuItemSchema],
   imageUrl: { type: String, required: true },
   lastUpdated: { type: Date, required: true },
+  averageRating: { type: Number, default: 0 }, // Added for restaurant rating
+  isOpen: { type: Boolean, default: true }, // Added for open/closed status
 });
 
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);

@@ -3,18 +3,17 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
-  role: 'customer' | 'restaurantAdmin' | 'superAdmin';
-  addresses: Address[];
-  createdAt: string;
+  addresses?: Address[];
+  role: 'customer' | 'restaurant_owner' | 'delivery_agent';
 }
 
 export interface Address {
   id: string;
-  label: string;
   street: string;
   city: string;
   state: string;
   zipCode: string;
+  country: string;
   isDefault: boolean;
 }
 
@@ -22,58 +21,31 @@ export interface Restaurant {
   id: string;
   name: string;
   description: string;
-  cuisine: string[];
+  cuisineType: string;
+  imageUrl: string;
   rating: number;
-  reviewCount: number;
-  deliveryTime: string;
-  deliveryFee: number;
+  deliveryTime: number;
   minimumOrder: number;
-  image: string;
-  coverImage: string;
+  deliveryFee: number;
   isOpen: boolean;
-  priceRange: '$' | '$$' | '$$$' | '$$$$';
-  location: {
-    address: string;
-    latitude: number;
-    longitude: number;
-  };
+  address: Address;
+  menuItems?: MenuItem[];
 }
 
 export interface MenuItem {
   id: string;
-  restaurantId: string;
   name: string;
   description: string;
   price: number;
-  image: string;
+  imageUrl: string;
   category: string;
   isAvailable: boolean;
-  isVegetarian: boolean;
-  isVegan: boolean;
-  isGlutenFree: boolean;
-  spiceLevel?: 'mild' | 'medium' | 'hot' | 'very-hot';
-  customizations?: Customization[];
-}
-
-export interface Customization {
-  id: string;
-  name: string;
-  options: CustomizationOption[];
-  required: boolean;
-  maxSelections: number;
-}
-
-export interface CustomizationOption {
-  id: string;
-  name: string;
-  price: number;
+  restaurantId: string;
 }
 
 export interface CartItem {
   menuItem: MenuItem;
   quantity: number;
-  customizations: { [key: string]: string[] };
-  specialInstructions?: string;
 }
 
 export interface Order {
@@ -81,59 +53,75 @@ export interface Order {
   userId: string;
   restaurantId: string;
   restaurant: Restaurant;
-  items: CartItem[];
-  subtotal: number;
-  deliveryFee: number;
-  tax: number;
-  discount: number;
-  total: number;
-  status: 'pending' | 'confirmed' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
+  items: OrderItem[];
+  totalAmount: number;
   deliveryAddress: Address;
-  paymentMethod: PaymentMethod;
-  promoCode?: string;
-  estimatedDeliveryTime: string;
-  actualDeliveryTime?: string;
+  status: OrderStatus;
   createdAt: string;
-  trackingInfo?: TrackingInfo;
+  estimatedDeliveryTime: string;
+  deliveryAgent?: DeliveryAgent;
 }
 
-export interface TrackingInfo {
-  driverName: string;
-  driverPhone: string;
-  driverLocation: {
+export interface OrderItem {
+  id: string;
+  menuItemId: string;
+  menuItem: MenuItem;
+  quantity: number;
+  price: number;
+}
+
+export type OrderStatus = 
+  | 'pending'
+  | 'confirmed'
+  | 'preparing'
+  | 'ready'
+  | 'picked_up'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled';
+
+export interface DeliveryAgent {
+  id: string;
+  name: string;
+  phone: string;
+  location: {
     latitude: number;
     longitude: number;
   };
-  estimatedArrival: string;
-}
-
-export interface PaymentMethod {
-  id: string;
-  type: 'card' | 'cash' | 'digital_wallet';
-  last4?: string;
-  brand?: string;
-  isDefault: boolean;
 }
 
 export interface Review {
   id: string;
   userId: string;
-  userName: string;
   restaurantId: string;
-  orderId: string;
   rating: number;
   comment: string;
-  images?: string[];
   createdAt: string;
+  user: {
+    name: string;
+  };
 }
 
-export interface PromoCode {
+export interface Promotion {
   id: string;
   code: string;
+  title: string;
   description: string;
-  type: 'percentage' | 'fixed' | 'free_delivery';
-  value: number;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
   minimumOrder: number;
-  expiresAt: string;
+  validUntil: string;
   isActive: boolean;
+}
+
+export interface PaymentMethod {
+  id: string;
+  user: string;
+  stripePaymentMethodId: string;
+  cardBrand: string;
+  last4: string;
+  expiryMonth?: number;
+  expiryYear?: number;
+  isDefault: boolean;
+  createdAt?: string;
 }

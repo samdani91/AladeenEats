@@ -21,6 +21,12 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ["placed", "paid", "inProgress", "outForDelivery", "delivered"],
   },
+  paymentMethod: {
+    type: String,
+    enum: ["stripe", "cash"],
+    default: "stripe",
+  }, // Added
+  paymentMethodId: { type: mongoose.Schema.Types.ObjectId, ref: "PaymentMethod" }, // Added for saved cards
   createdAt: { type: Date, default: Date.now },
 });
 

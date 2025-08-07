@@ -1,50 +1,75 @@
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { CartProvider } from '@/contexts/CartContext';
-import Layout from '@/components/Layout';
-import Home from '@/pages/Home';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import Cart from '@/pages/Cart';
-import Checkout from '@/pages/Checkout';
-import OrderTracking from '@/pages/OrderTracking';
-import Profile from '@/pages/Profile';
-import Orders from '@/pages/Orders';
-import RestaurantRegistration from './pages/RestaurantRegistration';
-import Restaurants from '@/pages/Restaurants';
-import RestaurantDetail from '@/pages/RestaurantDetail';
-import RestaurantDashboard from '@/pages/RestaurantDashboard';
-import UserSettings from '@/pages/UserSettings';
-import SuperAdminDashboard from '@/pages/SuperAdminDashboard';
-import { Toaster } from './components/ui/sonner';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Auth0Provider } from '@auth0/auth0-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
+import { useApiInterceptor } from './lib/api';
+import Header from './components/Layout/Header';
+import Footer from './components/Layout/Footer';
+import HomePage from './pages/HomePage';
+import RestaurantsPage from './pages/RestaurantsPage';
+import RestaurantDetailPage from './pages/RestaurantDetailPage';
+import CartPage from './pages/CartPage';
+import OrdersPage from './pages/OrdersPage';
+import ProfilePage from './pages/ProfilePage';
+import PaymentMethodsPage from './pages/PaymentMethodsPage';
+
+const queryClient = new QueryClient();
+
+const AppContent: React.FC = () => {
+  useApiInterceptor();
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/restaurants" element={<RestaurantsPage />} />
+          <Route path="/restaurant/:restaurantId" element={<RestaurantDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/payment-methods" element={<PaymentMethodsPage />} />
+        </Routes>
+      </main>
+      <Footer />
+      <Toaster 
+        position="bottom-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
+    </div>
+  );
+};
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path='/restaurantRegister' element={<RestaurantRegistration />} />
-            <Route path="/restaurant/dashboard" element={<RestaurantDashboard />} />
-            <Route path='/superAdmin' element={<SuperAdminDashboard />} />
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="restaurants" element={<Restaurants />} />
-              <Route path="restaurant/:id" element={<RestaurantDetail />} />
-              <Route path="cart" element={<Cart />} />
-              <Route path="checkout" element={<Checkout />} />
-              <Route path="order/:id" element={<OrderTracking />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="settings" element={<UserSettings />} />
-              <Route path="orders" element={<Orders />} />
-            </Route>
-          </Routes>
-        </Router>
-      </CartProvider>
-      <Toaster richColors position="bottom-right" />
-    </AuthProvider>
+    <Auth0Provider
+      domain={import.meta.env.VITE_AUTH0_DOMAIN || ''}
+      clientId={import.meta.env.VITE_AUTH0_CLIENT_ID || ''}
+      authorizationParams={{
+        redirect_uri: import.meta.env.VITE_AUTH0_CALLBACK_URL || window.location.origin,
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE || '',
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CartProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </CartProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </Auth0Provider>
   );
 }
 
